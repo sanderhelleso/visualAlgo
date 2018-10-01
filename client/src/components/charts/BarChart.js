@@ -9,7 +9,7 @@ export default class BarChart extends Component {
                 labels: this.createLabels(),
                 datasets: [
                     {
-                        label: 'Chart Test',
+                        label: 'Bubble Sort',
                         data: this.createData(),
                         backgroundColor: this.createBg()
                     }
@@ -21,7 +21,7 @@ export default class BarChart extends Component {
     createData() {
         const data = [];
         for (let i = 0; i < 300; i++) {
-            data[i] = i;
+            data[i] = Math.floor(Math.random() * 1000) + 1;
         }
 
         return data;
@@ -55,7 +55,6 @@ export default class BarChart extends Component {
         const dataCopy = datasetsCopy[0].data.slice(0);
 
         // update chartdata with random values
-        console.log(dataCopy);
         for (let i = 0; i < dataCopy.length; i++) {
             dataCopy[i] = Math.floor(Math.random() * (100 - 10 + 1)) + 10;
         }
@@ -72,14 +71,50 @@ export default class BarChart extends Component {
     }
 
     componentDidMount() {
-        this.timer = setInterval(
+        /*this.timer = setInterval(
           () => this.update(),
           1000
-        )
+        )*/
+
+        setTimeout(() => {
+            this.bubbleSort();
+        }, 2000);
       }
     
       componentWillUnmount() {
         clearInterval(this.timer)
+      }
+
+      bubbleSort() {
+            // create copy of dataset
+            const datasetsCopy = this.state.data.datasets.slice(0);
+            const dataCopy = datasetsCopy[0].data.slice(0);
+
+            // update chartdata with random values
+            let temp1 = 0;
+            let temp2 = 0;
+            for (let i = 0; i < dataCopy.length - 1; i++) {
+                for (let j = 0; j < dataCopy.length - i - 1; j++) {
+                    if (dataCopy[j] > dataCopy[j + 1]) {
+                        temp1 = dataCopy[j];
+                        temp2 = dataCopy[j + 1];
+
+                        // swap
+                        dataCopy[j] = temp2;
+                        dataCopy[j + 1] = temp1;
+                    }
+                }
+            }
+
+            // set copied updated dataset
+            datasetsCopy[0].data = dataCopy;
+            
+            // update data state of chart
+            this.setState({
+                data: Object.assign({}, this.state.data, {
+                    datasets: datasetsCopy
+                })
+            });
       }
 
     /*componentDidMount() {
