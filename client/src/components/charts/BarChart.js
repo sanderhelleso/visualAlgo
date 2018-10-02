@@ -16,11 +16,14 @@ export default class BarChart extends Component {
                 ]
             }
         }
+
+        // bind functions
+        this.bubbleSort = this.bubbleSort.bind(this);
     }
 
     createData() {
         const data = [];
-        for (let i = 1; i < 301; i++) {
+        for (let i = 0; i < 40; i++) {
             data[i] = Math.floor(Math.random() * 1000) + 1;
         }
 
@@ -29,7 +32,7 @@ export default class BarChart extends Component {
 
     createLabels() {
         const labels = [];
-        for (let i = 1; i < 301; i++) {
+        for (let i = 0; i < 40; i++) {
             labels[i] = `Data ${i}`;
         }
 
@@ -38,7 +41,7 @@ export default class BarChart extends Component {
 
     createBg() {
         const colors = [];
-        for (let i = 1; i < 301; i++) {
+        for (let i = 0; i < 40; i++) {
             // generate colors
             const red = Math.floor(Math.random() * 255) + 1;
             const green = Math.floor(Math.random() * 255) + 1;
@@ -77,10 +80,10 @@ export default class BarChart extends Component {
         )
 
         setTimeout(() => {
-            const datasetsCopy = this.state.data.datasets.slice(0);
+            /*const datasetsCopy = this.state.data.datasets.slice(0);
             let dataCopy = datasetsCopy[0].data;
-            this.mergeSort(dataCopy);
-            //this.bubbleSort();
+            this.mergeSort(dataCopy);*/
+            this.bubbleSort();
         }, 1000);
     }
     
@@ -88,6 +91,7 @@ export default class BarChart extends Component {
         clearInterval(this.timer)
     }
 
+    /**************** MERGE SORT ****************/
     mergeSort(data) {
 
         if (data.length === 1) {
@@ -133,51 +137,56 @@ export default class BarChart extends Component {
 
         return datasetsCopy[0].data;
     }
+    /**************** END MERGE SORT ****************/
 
+    /**************** BUBBLE SORT ****************/
     bubbleSort() {
 
         // create copy of dataset
-        const datasetsCopy = this.state.data.datasets.slice(0);
+        let datasetsCopy = this.state.data.datasets.slice(0);
         let dataCopy = datasetsCopy[0].data.slice(0);
 
         // update chartdata with random values
         let temp1 = 0;
         let temp2 = 0;
-        let timer = 1000;
+        let timer = 100;
         for (let i = 0; i < dataCopy.length - 1; i++) {
-            for (let j = 0; j < dataCopy.length - i - 1; j++) {
-                if (dataCopy[j] > dataCopy[j + 1]) {
+            timer += 1000;
+            setTimeout(() => {
 
-                    timer += 1000;
-                    this.timer = setTimeout(
-                        () => {
-                            
-                            console.log(datasetsCopy);
-                            temp1 = dataCopy[j];
-                            temp2 = dataCopy[j + 1];
-            
-                            // swap
-                            dataCopy[j] = temp2;
-                            dataCopy[j + 1] = temp1;
+                for (let j = 0; j < dataCopy.length - i - 1; j++) {
+                    if (dataCopy[j] > dataCopy[j + 1]) {
+    
+                        temp1 = dataCopy[j];
+                        temp2 = dataCopy[j + 1];
+                
+                        // swap
+                        dataCopy[j] = temp2;
+                        dataCopy[j + 1] = temp1;
 
-                            // set copied updated dataset
-                            datasetsCopy[0].data = dataCopy;
-                            
-                            // update data state of chart
-                            this.setState({
-                                data: Object.assign({}, this.state.data, {
-                                    datasets: datasetsCopy
-                                })
-                            });
-
-                        }
-                        ,
-                        timer
-                    )
+                        // update data state of chart
+                        this.setState({
+                            data: Object.assign({}, this.state.data, {
+                                datasets: datasetsCopy
+                            })
+                        }, this.updateBubble(dataCopy));
+                    }
                 }
-            }
+            }, timer);
         }
     }
+
+    updateBubble(data) {
+        let datasetsCopy = this.state.data.datasets.slice(0);
+        let dataCopy = datasetsCopy[0].data.slice(0);
+        datasetsCopy[0].data = data;
+        this.setState((state, props) => {
+            data: Object.assign({}, this.state.data, {
+                datasets: datasetsCopy
+            })
+        });
+    }
+    /**************** END BUBBLE SORT ****************/
 
     render() {
 
@@ -188,9 +197,12 @@ export default class BarChart extends Component {
                     width={100}
                     height={500}
                     options={{
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 0.1
+                        }
                     }}
-                />
+                redraw />
             </div>
         )
     }
