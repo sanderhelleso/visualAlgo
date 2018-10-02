@@ -9,7 +9,7 @@ export default class BarChart extends Component {
                 labels: this.createLabels(),
                 datasets: [
                     {
-                        label: 'Bubble Sort',
+                        label: 'Data 1 - 300',
                         data: this.createData(),
                         backgroundColor: this.createBg()
                     }
@@ -20,7 +20,7 @@ export default class BarChart extends Component {
 
     createData() {
         const data = [];
-        for (let i = 0; i < 300; i++) {
+        for (let i = 1; i < 301; i++) {
             data[i] = Math.floor(Math.random() * 1000) + 1;
         }
 
@@ -29,8 +29,8 @@ export default class BarChart extends Component {
 
     createLabels() {
         const labels = [];
-        for (let i = 0; i < 300; i++) {
-            labels[i] = `Label ${i}`;
+        for (let i = 1; i < 301; i++) {
+            labels[i] = `Data ${i}`;
         }
 
         return labels;
@@ -38,7 +38,7 @@ export default class BarChart extends Component {
 
     createBg() {
         const colors = [];
-        for (let i = 0; i < 300; i++) {
+        for (let i = 1; i < 301; i++) {
             // generate colors
             const red = Math.floor(Math.random() * 255) + 1;
             const green = Math.floor(Math.random() * 255) + 1;
@@ -71,84 +71,113 @@ export default class BarChart extends Component {
     }
 
     componentDidMount() {
-        /*this.timer = setInterval(
-          () => this.update(),
+        this.timer = setInterval(
+          //() => this.update(),
           1000
-        )*/
+        )
 
         setTimeout(() => {
-            this.bubbleSort();
-        }, 2000);
-      }
-    
-      componentWillUnmount() {
-        clearInterval(this.timer)
-      }
-
-      bubbleSort() {
-            // create copy of dataset
             const datasetsCopy = this.state.data.datasets.slice(0);
-            const dataCopy = datasetsCopy[0].data.slice(0);
+            let dataCopy = datasetsCopy[0].data;
+            this.mergeSort(dataCopy);
+            //this.bubbleSort();
+        }, 1000);
+    }
+    
+    componentWillUnmount() {
+        clearInterval(this.timer)
+    }
 
-            // update chartdata with random values
-            let temp1 = 0;
-            let temp2 = 0;
-            for (let i = 0; i < dataCopy.length - 1; i++) {
-                for (let j = 0; j < dataCopy.length - i - 1; j++) {
-                    if (dataCopy[j] > dataCopy[j + 1]) {
-                        temp1 = dataCopy[j];
-                        temp2 = dataCopy[j + 1];
+    mergeSort(data) {
 
-                        // swap
-                        dataCopy[j] = temp2;
-                        dataCopy[j + 1] = temp1;
-                    }
-                }
+        if (data.length === 1) {
+            // return once we hit an array with a single item
+            return data;
+        }
+
+        const middle = Math.floor(data.length / 2); // middle index
+        const left = data.slice(0, middle); // left
+        const right = data.slice(middle); // right
+
+        return this.merge(this.mergeSort(left),  this.mergeSort(right), data);
+    }
+
+    merge(left, right, data) {
+
+        let result = [];
+        let indexLeft = 0;
+        let indexRight = 0;
+
+        while(indexLeft < left.length && indexRight < right.length) {
+            if (left[indexLeft] < right[indexRight]) {
+                result.push(left[indexLeft]);
+                indexLeft++;
             }
 
-            // set copied updated dataset
-            datasetsCopy[0].data = dataCopy;
+            else {
+                result.push(right[indexRight]);
+                indexRight++;
+            }
+        }
+
+        // set copied updated dataset
+        const datasetsCopy = this.state.data.datasets.slice(0);
+        datasetsCopy[0].data = result.concat(left.slice(indexLeft)).concat(right.slice(indexRight));
+                            
+        // update data state of chart
+        this.setState({
+            data: Object.assign({}, this.state.data, {
+                datasets: datasetsCopy
+            })
+        });
+
+        return datasetsCopy[0].data;
+    }
+
+    bubbleSort() {
+
+        // create copy of dataset
+        const datasetsCopy = this.state.data.datasets.slice(0);
+        let dataCopy = datasetsCopy[0].data.slice(0);
+
+        // update chartdata with random values
+        let temp1 = 0;
+        let temp2 = 0;
+        let timer = 1000;
+        for (let i = 0; i < dataCopy.length - 1; i++) {
+            for (let j = 0; j < dataCopy.length - i - 1; j++) {
+                if (dataCopy[j] > dataCopy[j + 1]) {
+
+                    timer += 1000;
+                    this.timer = setTimeout(
+                        () => {
+                            
+                            console.log(datasetsCopy);
+                            temp1 = dataCopy[j];
+                            temp2 = dataCopy[j + 1];
             
-            // update data state of chart
-            this.setState({
-                data: Object.assign({}, this.state.data, {
-                    datasets: datasetsCopy
-                })
-            });
-      }
+                            // swap
+                            dataCopy[j] = temp2;
+                            dataCopy[j + 1] = temp1;
 
-    /*componentDidMount() {
-        setTimeout(() => {
-            this.setState({
-                data: {
-                    labels: ['Test 1', 'Test 2', 'Test 3'],
-                    datasets: [
-                        {
-                            label: 'Population',
-                            data: [
-                                123455,
-                                323131,
-                                131313,
-                                123123,
-                                193131,
-                                173123
-                            ],
-                            backgroundColor: [
-                               'rgba(215, 44, 44, 0.5)',
-                               'rgba(200, 10, 44, 0.5)',
-                               'rgba(100, 14, 200, 0.5)'
-                            ]
+                            // set copied updated dataset
+                            datasetsCopy[0].data = dataCopy;
+                            
+                            // update data state of chart
+                            this.setState({
+                                data: Object.assign({}, this.state.data, {
+                                    datasets: datasetsCopy
+                                })
+                            });
+
                         }
-                    ]
+                        ,
+                        timer
+                    )
                 }
-            });
-
-            console.log(this.state.data.datasets[0].data)
-            setTimeout(() => {
-                this.setState(this.state);
-            }, 1000);
-        }, 2000);
-    }*/
+            }
+        }
+    }
 
     render() {
 
