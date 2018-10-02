@@ -5,6 +5,8 @@ export default class BarChart extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            time: 0,
+            entries: 0,
             data: {
                 labels: this.createLabels(),
                 datasets: [
@@ -91,54 +93,6 @@ export default class BarChart extends Component {
         clearInterval(this.timer)
     }
 
-    /**************** MERGE SORT ****************/
-    mergeSort(data) {
-
-        if (data.length === 1) {
-            // return once we hit an array with a single item
-            return data;
-        }
-
-        const middle = Math.floor(data.length / 2); // middle index
-        const left = data.slice(0, middle); // left
-        const right = data.slice(middle); // right
-
-        return this.merge(this.mergeSort(left),  this.mergeSort(right), data);
-    }
-
-    merge(left, right, data) {
-
-        let result = [];
-        let indexLeft = 0;
-        let indexRight = 0;
-
-        while(indexLeft < left.length && indexRight < right.length) {
-            if (left[indexLeft] < right[indexRight]) {
-                result.push(left[indexLeft]);
-                indexLeft++;
-            }
-
-            else {
-                result.push(right[indexRight]);
-                indexRight++;
-            }
-        }
-
-        // set copied updated dataset
-        const datasetsCopy = this.state.data.datasets.slice(0);
-        datasetsCopy[0].data = result.concat(left.slice(indexLeft)).concat(right.slice(indexRight));
-                            
-        // update data state of chart
-        this.setState({
-            data: Object.assign({}, this.state.data, {
-                datasets: datasetsCopy
-            })
-        });
-
-        return datasetsCopy[0].data;
-    }
-    /**************** END MERGE SORT ****************/
-
     /**************** BUBBLE SORT ****************/
     bubbleSort() {
 
@@ -149,9 +103,13 @@ export default class BarChart extends Component {
         // update chartdata with random values
         let temp1 = 0;
         let temp2 = 0;
+        let entries = 0;
         for (let i = 0; i < dataCopy.length - 1; i++) {
 
             for (let j = 0; j < dataCopy.length - i - 1; j++) {
+
+                entries++;
+
                 if (dataCopy[j] > dataCopy[j + 1]) {
                     temp1 = dataCopy[j];
                     temp2 = dataCopy[j + 1];
@@ -167,6 +125,7 @@ export default class BarChart extends Component {
                             
         // update data state of chart
         this.setState({
+            entries: entries,
             data: Object.assign({}, this.state.data, {
                 datasets: datasetsCopy
             })
@@ -179,12 +138,22 @@ export default class BarChart extends Component {
         return (
             <div>
                 <h2>Bubblesort</h2>
+                <h5>Array Enries: {this.state.entries}</h5>
                 <Bar
                     data={this.state.data}
                     width={100}
-                    height={500}
+                    height={250}
                     options={{
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        legend: {
+                            display: false
+                        },
+                        scales: { 
+                            xAxes: [{ display: false, }], yAxes: [{ display: true, }], 
+                        },
+                        animation: {
+                            duration: 5000
+                        }
                     }}
                 />
             </div>

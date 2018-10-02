@@ -5,6 +5,7 @@ export default class BarChart extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            entries: 0,
             data: {
                 labels: this.createLabels(),
                 datasets: [
@@ -108,8 +109,10 @@ export default class BarChart extends Component {
         let result = [];
         let indexLeft = 0;
         let indexRight = 0;
-
+        
+        let entries = 0;
         while(indexLeft < left.length && indexRight < right.length) {
+            entries++;
             if (left[indexLeft] < right[indexRight]) {
                 result.push(left[indexLeft]);
                 indexLeft++;
@@ -127,6 +130,7 @@ export default class BarChart extends Component {
                             
         // update data state of chart
         this.setState({
+            entries: entries += entries,
             data: Object.assign({}, this.state.data, {
                 datasets: datasetsCopy
             })
@@ -139,13 +143,23 @@ export default class BarChart extends Component {
 
         return (
             <div>
-                <h2>Bubblesort</h2>
+                <h2>Mergesort</h2>
+                <h5>Array Enries: {this.state.entries}</h5>
                 <Bar
                     data={this.state.data}
                     width={100}
-                    height={500}
+                    height={250}
                     options={{
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        legend: {
+                            display: false
+                        },
+                        scales: { 
+                            xAxes: [{ display: false, }], yAxes: [{ display: true, }], 
+                        },
+                        animation: {
+                            duration: 5000
+                        }
                     }}
                 />
             </div>
