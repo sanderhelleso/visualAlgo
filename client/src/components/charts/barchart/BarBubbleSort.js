@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 
 export default class BarChart extends Component {
     constructor(props) {
@@ -7,11 +7,12 @@ export default class BarChart extends Component {
         this.state = {
             time: 0,
             entries: 0,
+            animationDuration: 3000,
             data: {
                 labels: this.createLabels(),
                 datasets: [
                     {
-                        label: 'Data 1 - 300',
+                        label: '',
                         data: this.createData(),
                         backgroundColor: this.createBg()
                     }
@@ -22,7 +23,7 @@ export default class BarChart extends Component {
 
     createData() {
         const data = [];
-        for (let i = 0; i < 300; i++) {
+        for (let i = 0; i < 200; i++) {
             data[i] = Math.floor(Math.random() * 1000) + 1;
         }
 
@@ -31,7 +32,7 @@ export default class BarChart extends Component {
 
     createLabels() {
         const labels = [];
-        for (let i = 0; i < 300; i++) {
+        for (let i = 0; i < 200; i++) {
             labels[i] = `Data ${i}`;
         }
 
@@ -40,7 +41,7 @@ export default class BarChart extends Component {
 
     createBg() {
         const colors = [];
-        for (let i = 0; i < 300; i++) {
+        for (let i = 0; i < 200; i++) {
             // generate colors
             const red = Math.floor(Math.random() * 255) + 1;
             const green = Math.floor(Math.random() * 255) + 1;
@@ -133,28 +134,33 @@ export default class BarChart extends Component {
     }
     /**************** END BUBBLE SORT ****************/
 
+    // chart options
+    chartOptions() {
+        return {
+            maintainAspectRatio: false,
+            legend: {
+                display: false
+            },
+            scales: { 
+                xAxes: [{ display: false, }], yAxes: [{ display: true, }], 
+            },
+            animation: {
+                duration: this.state.animationDuration
+            }
+        }
+    }
+
     render() {
 
         return (
             <div>
                 <h2>Bubblesort</h2>
                 <h5>Array Enries: {this.state.entries}</h5>
-                <Bar
+                <Line
                     data={this.state.data}
                     width={100}
                     height={250}
-                    options={{
-                        maintainAspectRatio: false,
-                        legend: {
-                            display: false
-                        },
-                        scales: { 
-                            xAxes: [{ display: false, }], yAxes: [{ display: true, }], 
-                        },
-                        animation: {
-                            duration: 5000
-                        }
-                    }}
+                    options={this.chartOptions()}
                 />
             </div>
         )

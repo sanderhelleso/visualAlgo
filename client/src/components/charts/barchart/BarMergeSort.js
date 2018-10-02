@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Pie, Line } from 'react-chartjs-2';
 
 export default class BarChart extends Component {
     constructor(props) {
@@ -145,7 +145,7 @@ export default class BarChart extends Component {
             <div>
                 <h2>Mergesort</h2>
                 <h5>Array Enries: {this.state.entries}</h5>
-                <Bar
+                <Line
                     data={this.state.data}
                     width={100}
                     height={250}
