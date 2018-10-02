@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Bar, Line, Radar, Pie, HorizontalBar } from 'react-chartjs-2';
 import {Button, Icon, Row, Col} from 'react-materialize';
-
+import CountUp from 'react-countup';
 
 export default class BarChart extends Component {
     constructor(props) {
@@ -56,7 +56,7 @@ export default class BarChart extends Component {
     }
 
     dataAmount() {
-        let data = 20;
+        let data = 300;
         return data;
     }
 
@@ -234,7 +234,7 @@ export default class BarChart extends Component {
             chart: 'Bar'
         });
 
-        //this.play();
+        this.play();
     }
 
     setRadarChart() {
@@ -242,7 +242,7 @@ export default class BarChart extends Component {
             chart: 'Radar'
         });
 
-        //this.play();
+        this.play();
     }
 
     setLineChart() {
@@ -250,7 +250,7 @@ export default class BarChart extends Component {
             chart: 'Line'
         });
 
-        //this.play();
+        this.play();
     }
 
     setPieChart() {
@@ -258,7 +258,7 @@ export default class BarChart extends Component {
             chart: 'Pie'
         });
 
-        //this.play();
+        this.play();
     }
 
     setHrBarChart() {
@@ -266,7 +266,7 @@ export default class BarChart extends Component {
             chart: 'HorizontalBar'
         });
 
-        //this.play();
+        this.play();
     }
 
     render() {
@@ -282,7 +282,7 @@ export default class BarChart extends Component {
                     <Button waves='light' onClick={this.setRadarChart}>Radar</Button>
                 </Col>
                 <Col s={8}>
-                    <h5>Array Entries: {this.state.entries}</h5>
+                    <h5>Array Entries: <CountUp duration={this.state.animationDuration / 1500} end={this.state.entries} /></h5>
                     <h5>Performance (ms): {this.state.performance}</h5>
                     {this.chart()}
                 </Col>
