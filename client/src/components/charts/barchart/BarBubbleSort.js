@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
+import {Button, Icon, Row, Col} from 'react-materialize';
+
 
 export default class BarChart extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            time: 0,
+            chart: 'Bar',
+            performance: 0,
             entries: 0,
             animationDuration: 3000,
+            dataAmount: this.dataAmount(),
             data: {
                 labels: this.createLabels(),
                 datasets: [
@@ -19,11 +23,41 @@ export default class BarChart extends Component {
                 ]
             }
         }
+
+        this.play = this.play.bind(this);
+    }
+
+    play() {
+        this.setState({
+            performance: 0,
+            entries: 0,
+            animationDuration: 3000,
+            dataAmount: 10,
+            data: {
+                labels: this.createLabels(),
+                datasets: [
+                    {
+                        label: '',
+                        data: this.createData(),
+                        backgroundColor: this.createBg()
+                    }
+                ]
+            }
+        })
+
+        setTimeout(() => {
+            this.bubbleSort();
+        }, 2000);
+    }
+
+    dataAmount() {
+        let data = 50;
+        return data;
     }
 
     createData() {
         const data = [];
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < this.dataAmount(); i++) {
             data[i] = Math.floor(Math.random() * 1000) + 1;
         }
 
@@ -32,7 +66,7 @@ export default class BarChart extends Component {
 
     createLabels() {
         const labels = [];
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < this.dataAmount(); i++) {
             labels[i] = `Data ${i}`;
         }
 
@@ -41,7 +75,7 @@ export default class BarChart extends Component {
 
     createBg() {
         const colors = [];
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < this.dataAmount(); i++) {
             // generate colors
             const red = Math.floor(Math.random() * 255) + 1;
             const green = Math.floor(Math.random() * 255) + 1;
@@ -97,6 +131,9 @@ export default class BarChart extends Component {
     /**************** BUBBLE SORT ****************/
     bubbleSort() {
 
+        // start performance timer
+        const performanceStart = performance.now();
+
         // create copy of dataset
         const datasetsCopy = this.state.data.datasets.slice(0);
         let dataCopy = datasetsCopy[0].data.slice(0);
@@ -109,9 +146,9 @@ export default class BarChart extends Component {
 
             for (let j = 0; j < dataCopy.length - i - 1; j++) {
 
-                entries++;
-
                 if (dataCopy[j] > dataCopy[j + 1]) {
+                    entries++;
+
                     temp1 = dataCopy[j];
                     temp2 = dataCopy[j + 1];
             
@@ -127,6 +164,7 @@ export default class BarChart extends Component {
         // update data state of chart
         this.setState({
             entries: entries,
+            performance: (performance.now() - performanceStart),
             data: Object.assign({}, this.state.data, {
                 datasets: datasetsCopy
             })
@@ -150,18 +188,38 @@ export default class BarChart extends Component {
         }
     }
 
+    chart() {
+
+        switch(this.state.chart) {
+            case 'Bar':
+            return <Bar
+                data={this.state.data}
+                width={100}
+                height={250}
+                options={this.chartOptions()}
+            />
+
+            case 'Line':
+            return <Line
+                data={this.state.data}
+                width={100}
+                height={250}
+                options={this.chartOptions()}
+            />
+
+        }
+    }
+
     render() {
 
         return (
             <div>
-                <h2>Bubblesort</h2>
-                <h5>Array Enries: {this.state.entries}</h5>
-                <Line
-                    data={this.state.data}
-                    width={100}
-                    height={250}
-                    options={this.chartOptions()}
-                />
+                <h3>Bubblesort</h3>
+                <Button waves='light' onClick={this.play}>Play</Button>
+                <h5>Array Entries: {this.state.entries}</h5>
+                <h5>Performance (ms): {this.state.performance}</h5>
+                {this.chart()}
+                
             </div>
         )
     }
