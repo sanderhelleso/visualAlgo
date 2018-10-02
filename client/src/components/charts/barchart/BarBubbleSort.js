@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Bar, Line } from 'react-chartjs-2';
+import { Bar, Line, Radar, Pie, HorizontalBar } from 'react-chartjs-2';
 import {Button, Icon, Row, Col} from 'react-materialize';
 
 
@@ -10,7 +10,7 @@ export default class BarChart extends Component {
             chart: 'Bar',
             performance: 0,
             entries: 0,
-            animationDuration: 3000,
+            animationDuration: 1500,
             dataAmount: this.dataAmount(),
             data: {
                 labels: this.createLabels(),
@@ -25,14 +25,18 @@ export default class BarChart extends Component {
         }
 
         this.play = this.play.bind(this);
+        this.setBarChart = this.setBarChart.bind(this);
+        this.setRadarChart = this.setRadarChart.bind(this);
+        this.setLineChart = this.setLineChart.bind(this);
+        this.setPieChart = this.setPieChart.bind(this);
+        this.setHrBarChart = this.setHrBarChart.bind(this);
     }
 
     play() {
         this.setState({
             performance: 0,
             entries: 0,
-            animationDuration: 3000,
-            dataAmount: 10,
+            animationDuration: 1500,
             data: {
                 labels: this.createLabels(),
                 datasets: [
@@ -45,13 +49,14 @@ export default class BarChart extends Component {
             }
         })
 
+        this.chart();
         setTimeout(() => {
             this.bubbleSort();
-        }, 2000);
+        }, 1500);
     }
 
     dataAmount() {
-        let data = 50;
+        let data = 20;
         return data;
     }
 
@@ -180,7 +185,7 @@ export default class BarChart extends Component {
                 display: false
             },
             scales: { 
-                xAxes: [{ display: false, }], yAxes: [{ display: true, }], 
+                xAxes: [{ display: false, }], yAxes: [{ display: false, }], 
             },
             animation: {
                 duration: this.state.animationDuration
@@ -194,33 +199,94 @@ export default class BarChart extends Component {
             case 'Bar':
             return <Bar
                 data={this.state.data}
-                width={100}
-                height={250}
                 options={this.chartOptions()}
             />
 
             case 'Line':
             return <Line
                 data={this.state.data}
-                width={100}
-                height={250}
+                options={this.chartOptions()}
+            />
+
+            case 'Radar':
+            return <Radar
+                data={this.state.data}
+                options={this.chartOptions()}
+            />
+
+            case 'Pie':
+            return <Pie
+                data={this.state.data}
+                options={this.chartOptions()}
+            />
+
+            case 'HorizontalBar':
+            return <HorizontalBar className='animated fadeIn'
+                data={this.state.data}
                 options={this.chartOptions()}
             />
 
         }
     }
 
+    setBarChart() {
+        this.setState({
+            chart: 'Bar'
+        });
+
+        //this.play();
+    }
+
+    setRadarChart() {
+        this.setState({
+            chart: 'Radar'
+        });
+
+        //this.play();
+    }
+
+    setLineChart() {
+        this.setState({
+            chart: 'Line'
+        });
+
+        //this.play();
+    }
+
+    setPieChart() {
+        this.setState({
+            chart: 'Pie'
+        });
+
+        //this.play();
+    }
+
+    setHrBarChart() {
+        this.setState({
+            chart: 'HorizontalBar'
+        });
+
+        //this.play();
+    }
+
     render() {
 
         return (
-            <div>
-                <h3>Bubblesort</h3>
-                <Button waves='light' onClick={this.play}>Play</Button>
-                <h5>Array Entries: {this.state.entries}</h5>
-                <h5>Performance (ms): {this.state.performance}</h5>
-                {this.chart()}
-                
-            </div>
+            <Row>
+                <Col s={4}>
+                    <h3>Bubblesort</h3>
+                    <Button waves='light' onClick={this.setBarChart}>Bar</Button>
+                    <Button waves='light' onClick={this.setHrBarChart}>Horizontal Bar</Button>
+                    <Button waves='light' onClick={this.setLineChart}>Line</Button>
+                    <Button waves='light' onClick={this.setPieChart}>Pie</Button>
+                    <Button waves='light' onClick={this.setRadarChart}>Radar</Button>
+                </Col>
+                <Col s={8}>
+                    <h5>Array Entries: {this.state.entries}</h5>
+                    <h5>Performance (ms): {this.state.performance}</h5>
+                    {this.chart()}
+                </Col>
+            </Row>
         )
     }
 }
