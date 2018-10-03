@@ -12,3 +12,7 @@ button {
 #stats h5 {
     margin-bottom: 2rem;
 }
+
+#algo-name {
+    text-transform: capitalize;
+}

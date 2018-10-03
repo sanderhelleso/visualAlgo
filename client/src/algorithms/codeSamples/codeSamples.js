@@ -1,6 +1,6 @@
 export function codeSamples() {
     const codeSamples = {
-        bubbel_sort: `
+        bubble_sort: `
         function bubbleSort(data) {
             let temp1 = 0;
             let temp2 = 0;

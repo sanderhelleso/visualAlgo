@@ -16,7 +16,7 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            algo: 'bubbel_sort',
+            algo: 'bubble_sort',
             chart: 'Bar',
             performance: 0,
             animationDuration: 3000,
@@ -264,12 +264,11 @@ export default class App extends Component {
     updateAlgo(e) {
         this.setState({
             algo: e.target.value
-        })
-        this.codeSamples();
-        console.log(this.state);
+        },() => this.codeSamples());
     }
 
     codeSamples() {
+        console.log(this.state.algo)
         Object.keys(codeSamples()).map(key => {
             if (key === this.state.algo) {
                 this.setState({
@@ -277,7 +276,6 @@ export default class App extends Component {
                 });
             }
         });
-
     }
 
     render() {
@@ -285,7 +283,7 @@ export default class App extends Component {
         return (
             <Row className='container'>
                 <Col s={4}>
-                    <h3>Bubble Sort</h3>
+                    <h3 id='algo-name'>{this.state.algo.split('_').join(' ')}</h3>
                     <Row>
                         <Input s={12} type='select' label="Select Algorithm" defaultValue='bubble_sort' onChange={(e) => {this.updateAlgo(e)}}>
                             <option value='bubble_sort'>Bubble Sort</option>
@@ -293,9 +291,9 @@ export default class App extends Component {
                         </Input>
                     </Row>
                     <Row>
-                        <Input s={6} label="Amount of data" validate defaultValue='50' onChange={(e) => {this.updateAmount(e)}} />
-                        <Input s={6} label="Visual Duration (sec)" validate defaultValue='3' onChange={(e) => {this.updateDuration(e)}}/>
-                        <Input s={6} label="Datatype" disabled={true} validate defaultValue='Integer' />
+                        <Input s={6} label="Amount of data" defaultValue='50' onChange={(e) => {this.updateAmount(e)}} />
+                        <Input s={6} label="Visual Duration (sec)" defaultValue='3' onChange={(e) => {this.updateDuration(e)}}/>
+                        <Input s={6} label="Datatype" disabled={true} defaultValue='Integer' />
                     </Row>
                     <Button waves='light' onClick={this.setBarChart}>Bar</Button>
                     <Button waves='light' onClick={this.setHrBarChart}>Horizontal Bar</Button>
@@ -311,10 +309,9 @@ export default class App extends Component {
                     {this.chart()}
                 </Col>
                 <Col s={12}>
-                    <Highlight className='javascript'> {
-                        this.state.codeSample
-                    }
-                    </Highlight>
+                    <pre>
+                        {this.state.codeSample}
+                    </pre>
                 </Col>
             </Row>
         )
