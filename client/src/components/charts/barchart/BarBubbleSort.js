@@ -13,19 +13,20 @@ export default class BarChart extends Component {
             performance: 0,
             entries: 0,
             animationDuration: 5000,
-            dataAmount: this.dataAmount(),
+            dataAmount: 100,
             data: {
-                labels: this.createLabels(),
+                labels: this.createLabels(100),
                 datasets: [
                     {
                         label: '',
-                        data: this.createData(),
-                        backgroundColor: this.createBg()
+                        data: this.createData(100),
+                        backgroundColor: this.createBg(100)
                     }
                 ]
             }
         }
 
+        // play
         this.play = this.play.bind(this);
 
         // charts
@@ -41,6 +42,7 @@ export default class BarChart extends Component {
     }
 
     play() {
+        document.querySelector('#chart').className = 'col s8 animated fadeIn';
         this.setState({
             performance: 0,
             entries: 0,
@@ -58,36 +60,44 @@ export default class BarChart extends Component {
 
         this.chart();
         setTimeout(() => {
+            document.querySelector('#chart').className = 'col s8 animated';
             this.bubbleSort();
-        }, 1500);
+        }, 1000);
     }
 
-    dataAmount() {
-        let data = 300;
-        return data;
-    }
+    createData(amount) {
+        if (amount == undefined) {
+            amount = this.state.dataAmount;
+        }
 
-    createData() {
         const data = [];
-        for (let i = 0; i < this.dataAmount(); i++) {
+        for (let i = 0; i < amount; i++) {
             data[i] = Math.floor(Math.random() * 1000) + 1;
         }
 
         return data;
     }
 
-    createLabels() {
+    createLabels(amount) {
+        if (amount == undefined) {
+            amount = this.state.dataAmount;
+        }
+
         const labels = [];
-        for (let i = 0; i < this.dataAmount(); i++) {
+        for (let i = 0; i < amount; i++) {
             labels[i] = `Data ${i}`;
         }
 
         return labels;
     }
 
-    createBg() {
+    createBg(amount) {
+        if (amount == undefined) {
+            amount = this.state.dataAmount;
+        }
+
         const colors = [];
-        for (let i = 0; i < this.dataAmount(); i++) {
+        for (let i = 0; i < amount; i++) {
             // generate colors
             const red = Math.floor(Math.random() * 255) + 1;
             const green = Math.floor(Math.random() * 255) + 1;
@@ -98,33 +108,7 @@ export default class BarChart extends Component {
         return colors;
     }
 
-    update() {
-        // create copy of dataset
-        const datasetsCopy = this.state.data.datasets.slice(0);
-        const dataCopy = datasetsCopy[0].data.slice(0);
-
-        // update chartdata with random values
-        for (let i = 0; i < dataCopy.length; i++) {
-            dataCopy[i] = Math.floor(Math.random() * (100 - 10 + 1)) + 10;
-        }
-
-        // set copied updated dataset
-        datasetsCopy[0].data = dataCopy;
-        
-        // update data state of chart
-        this.setState({
-            data: Object.assign({}, this.state.data, {
-                datasets: datasetsCopy
-            })
-        });
-    }
-
     componentDidMount() {
-        this.timer = setInterval(
-          //() => this.update(),
-          1000
-        )
-
         setTimeout(() => {
             // state data
             const datasetsCopy = this.state.data.datasets.slice(0);
@@ -283,6 +267,10 @@ export default class BarChart extends Component {
                 dataAmount: e.target.value
             });
         }
+
+        else {
+            window.Materialize.toast('Max data amount is 300!', 200);
+        }
         console.log(e.target.value);
     }
 
@@ -298,18 +286,20 @@ export default class BarChart extends Component {
             <Row>
                 <Col s={4}>
                     <h3>Bubblesort</h3>
+                    <Row>
+                        <Input s={6} label="Amount of data" validate defaultValue='100' onChange={(e) => {this.updateAmount(e)}} />
+                        <Input s={6} label="Visual Duration (sec)" validate defaultValue='5' onChange={(e) => {this.updateDuration(e)}}/>
+                        <Input s={6} label="Datatype" disabled={true} validate defaultValue='Integer' />
+                    </Row>
+                    <h5>Chart</h5>
                     <Button waves='light' onClick={this.setBarChart}>Bar</Button>
                     <Button waves='light' onClick={this.setHrBarChart}>Horizontal Bar</Button>
                     <Button waves='light' onClick={this.setLineChart}>Line</Button>
                     <Button waves='light' onClick={this.setPieChart}>Pie</Button>
                     <Button waves='light' onClick={this.setRadarChart}>Radar</Button>
-                    <Row>
-                        <Input s={6} label="Amount of data" validate defaultValue='300' onChange={(e) => {this.updateAmount(e)}} />
-                        <Input s={6} label="Visual Duration (sec)" validate defaultValue='5' onChange={(e) => {this.updateDuration(e)}}/>
-                    </Row>
                 </Col>
                 <Col id='chart' s={8}>
-                    <h5>Array Entries: <CountUp duration={this.state.animationDuration / 1500} end={this.state.entries} /></h5>
+                    <h5>Array Entries: {this.state.entries} </h5>
                     <h5>Performance (ms): {this.state.performance}</h5>
                     {this.chart()}
                 </Col>
