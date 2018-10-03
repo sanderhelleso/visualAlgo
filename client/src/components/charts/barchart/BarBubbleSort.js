@@ -12,15 +12,15 @@ export default class BarChart extends Component {
             chart: 'Bar',
             performance: 0,
             entries: 0,
-            animationDuration: 5000,
-            dataAmount: 100,
+            animationDuration: 3000,
+            dataAmount: 50,
             data: {
-                labels: this.createLabels(100),
+                labels: this.createLabels(50),
                 datasets: [
                     {
                         label: '',
-                        data: this.createData(100),
-                        backgroundColor: this.createBg(100)
+                        data: this.createData(50),
+                        backgroundColor: this.createBg(50)
                     }
                 ]
             }
@@ -85,7 +85,7 @@ export default class BarChart extends Component {
 
         const labels = [];
         for (let i = 0; i < amount; i++) {
-            labels[i] = `Data ${i}`;
+            labels[i] = `Data ${i + 1}`;
         }
 
         return labels;
@@ -133,10 +133,14 @@ export default class BarChart extends Component {
         // create copy of dataset
         const datasetsCopy = this.state.data.datasets.slice(0);
         let dataCopy = datasetsCopy[0].data.slice(0);
+        let dataBg = datasetsCopy[0].backgroundColor.slice(0);
 
-        // update chartdata with random values
+        // temp values to swap data
         let temp1 = 0;
         let temp2 = 0;
+        let bgTemp1 = 0;
+        let bgTemp2 = 0;
+
         let entries = 0;
         for (let i = 0; i < dataCopy.length - 1; i++) {
 
@@ -147,10 +151,14 @@ export default class BarChart extends Component {
 
                     temp1 = dataCopy[j];
                     temp2 = dataCopy[j + 1];
+                    bgTemp1 = dataBg[j];
+                    bgTemp2 = dataBg[j + 1];
             
                     // swap
                     dataCopy[j] = temp2;
                     dataCopy[j + 1] = temp1;
+                    dataBg[j] = bgTemp2;
+                    dataBg[j + 1] = bgTemp1;
                 }
             }
         }
@@ -269,7 +277,7 @@ export default class BarChart extends Component {
         }
 
         else {
-            window.Materialize.toast('Max data amount is 300!', 200);
+            window.Materialize.toast('Max data amount is 300!', 2000);
         }
         console.log(e.target.value);
     }
@@ -287,8 +295,8 @@ export default class BarChart extends Component {
                 <Col s={4}>
                     <h3>Bubblesort</h3>
                     <Row>
-                        <Input s={6} label="Amount of data" validate defaultValue='100' onChange={(e) => {this.updateAmount(e)}} />
-                        <Input s={6} label="Visual Duration (sec)" validate defaultValue='5' onChange={(e) => {this.updateDuration(e)}}/>
+                        <Input s={6} label="Amount of data" validate defaultValue='50' onChange={(e) => {this.updateAmount(e)}} />
+                        <Input s={6} label="Visual Duration (sec)" validate defaultValue='3' onChange={(e) => {this.updateDuration(e)}}/>
                         <Input s={6} label="Datatype" disabled={true} validate defaultValue='Integer' />
                     </Row>
                     <h5>Chart</h5>
