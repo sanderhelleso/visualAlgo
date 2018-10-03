@@ -4,6 +4,9 @@ import { Button, Icon, Row, Col, Tabs, Tab, Input } from 'react-materialize';
 import CountUp from 'react-countup';
 import Highlight from 'react-highlight';
 
+// import algos
+import { bubbleSort } from '../../../algorithms/bubbleSort';
+
 
 export default class BarChart extends Component {
     constructor(props) {
@@ -13,6 +16,7 @@ export default class BarChart extends Component {
             performance: 0,
             entries: 0,
             animationDuration: 3000,
+            shuffleTime: 1000,
             dataAmount: 50,
             data: {
                 labels: this.createLabels(50),
@@ -41,11 +45,28 @@ export default class BarChart extends Component {
         this.updateDuration = this.updateDuration.bind(this);
     }
 
+    // initialete app state
+    componentDidMount() {
+        const newData = bubbleSort(this.state.data.datasets.slice(0))[0];
+        this.setState({
+            entries: newData.entries,
+            performance: newData.performance,
+            data: Object.assign({}, this.state.data, {
+                datasets: [{
+                    data: newData.data,
+                    backgroundColor: newData.backgroundColor
+                }]
+            })
+        });
+    }
+
     play() {
         document.querySelector('#chart').className = 'col s8 animated fadeIn';
         this.setState({
             performance: 0,
             entries: 0,
+            shuffleTime: this.state.animationDuration,
+            animationDuration: 1000,
             data: {
                 labels: this.createLabels(),
                 datasets: [
@@ -60,9 +81,28 @@ export default class BarChart extends Component {
 
         this.chart();
         setTimeout(() => {
+            this.setState({
+                animationDuration: this.state.shuffleTime,
+                shuffleTime: 1000
+            });
             document.querySelector('#chart').className = 'col s8 animated';
+
             this.bubbleSort();
         }, 1000);
+    }
+
+    bubbleSort() {
+        const newData = bubbleSort(this.state.data.datasets.slice(0))[0];
+        this.setState({
+            entries: newData.entries,
+            performance: newData.performance,
+            data: Object.assign({}, this.state.data, {
+                datasets: [{
+                    data: newData.data,
+                    backgroundColor: newData.backgroundColor
+                }]
+            })
+        });
     }
 
     createData(amount) {
@@ -107,74 +147,10 @@ export default class BarChart extends Component {
 
         return colors;
     }
-
-    componentDidMount() {
-        setTimeout(() => {
-            // state data
-            const datasetsCopy = this.state.data.datasets.slice(0);
-            let dataCopy = datasetsCopy[0].data;
-
-
-            //this.mergeSort(dataCopy);
-            this.bubbleSort();
-        }, 1000);
-    }
     
     componentWillUnmount() {
         clearInterval(this.timer)
     }
-
-    /**************** BUBBLE SORT ****************/
-    bubbleSort() {
-
-        // start performance timer
-        const performanceStart = performance.now();
-
-        // create copy of dataset
-        const datasetsCopy = this.state.data.datasets.slice(0);
-        let dataCopy = datasetsCopy[0].data.slice(0);
-        let dataBg = datasetsCopy[0].backgroundColor.slice(0);
-
-        // temp values to swap data
-        let temp1 = 0;
-        let temp2 = 0;
-        let bgTemp1 = 0;
-        let bgTemp2 = 0;
-
-        let entries = 0;
-        for (let i = 0; i < dataCopy.length - 1; i++) {
-
-            for (let j = 0; j < dataCopy.length - i - 1; j++) {
-
-                if (dataCopy[j] > dataCopy[j + 1]) {
-                    entries++;
-
-                    temp1 = dataCopy[j];
-                    temp2 = dataCopy[j + 1];
-                    bgTemp1 = dataBg[j];
-                    bgTemp2 = dataBg[j + 1];
-            
-                    // swap
-                    dataCopy[j] = temp2;
-                    dataCopy[j + 1] = temp1;
-                    dataBg[j] = bgTemp2;
-                    dataBg[j + 1] = bgTemp1;
-                }
-            }
-        }
-        // set copied updated dataset
-        datasetsCopy[0].data = dataCopy;
-                            
-        // update data state of chart
-        this.setState({
-            entries: entries,
-            performance: (performance.now() - performanceStart),
-            data: Object.assign({}, this.state.data, {
-                datasets: datasetsCopy
-            })
-        });
-    }
-    /**************** END BUBBLE SORT ****************/
 
     // chart options
     chartOptions() {
@@ -187,7 +163,8 @@ export default class BarChart extends Component {
                 xAxes: [{ display: false, }], yAxes: [{ display: false, }], 
             },
             animation: {
-                duration: this.state.animationDuration
+                duration: this.state.animationDuration,
+                animationEasing: 'linear'
             }
         }
     }
@@ -307,8 +284,10 @@ export default class BarChart extends Component {
                     <Button waves='light' onClick={this.setRadarChart}>Radar</Button>
                 </Col>
                 <Col id='chart' s={8}>
-                    <h5>Array Entries: {this.state.entries} </h5>
-                    <h5>Performance (ms): {this.state.performance}</h5>
+                    <div id='stats'>
+                        <h5>Array Entries: {this.state.entries} </h5>
+                        <h5>Performance (ms): {this.state.performance}</h5>
+                    </div>
                     {this.chart()}
                 </Col>
                 <Col s={12}>
