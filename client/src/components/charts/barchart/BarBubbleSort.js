@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Bar, Line, Radar, Pie, HorizontalBar } from 'react-chartjs-2';
-import {Button, Icon, Row, Col} from 'react-materialize';
+import { Button, Icon, Row, Col, Tabs, Tab, Input } from 'react-materialize';
 import CountUp from 'react-countup';
+import Highlight from 'react-highlight';
+
 
 export default class BarChart extends Component {
     constructor(props) {
@@ -10,7 +12,7 @@ export default class BarChart extends Component {
             chart: 'Bar',
             performance: 0,
             entries: 0,
-            animationDuration: 1500,
+            animationDuration: 5000,
             dataAmount: this.dataAmount(),
             data: {
                 labels: this.createLabels(),
@@ -25,18 +27,23 @@ export default class BarChart extends Component {
         }
 
         this.play = this.play.bind(this);
+
+        // charts
         this.setBarChart = this.setBarChart.bind(this);
         this.setRadarChart = this.setRadarChart.bind(this);
         this.setLineChart = this.setLineChart.bind(this);
         this.setPieChart = this.setPieChart.bind(this);
         this.setHrBarChart = this.setHrBarChart.bind(this);
+
+        // input
+        this.updateAmount = this.updateAmount.bind(this);
+        this.updateDuration = this.updateDuration.bind(this);
     }
 
     play() {
         this.setState({
             performance: 0,
             entries: 0,
-            animationDuration: 1500,
             data: {
                 labels: this.createLabels(),
                 datasets: [
@@ -269,6 +276,22 @@ export default class BarChart extends Component {
         this.play();
     }
 
+    // update amount of chart
+    updateAmount(e) {
+        if (e.target.value <= 300) {
+            this.setState({
+                dataAmount: e.target.value
+            });
+        }
+        console.log(e.target.value);
+    }
+
+    updateDuration(e) {
+        this.setState({
+            animationDuration: e.target.value * 1000
+        });
+    }
+
     render() {
 
         return (
@@ -280,11 +303,38 @@ export default class BarChart extends Component {
                     <Button waves='light' onClick={this.setLineChart}>Line</Button>
                     <Button waves='light' onClick={this.setPieChart}>Pie</Button>
                     <Button waves='light' onClick={this.setRadarChart}>Radar</Button>
+                    <Row>
+                        <Input s={6} label="Amount of data" validate defaultValue='300' onChange={(e) => {this.updateAmount(e)}} />
+                        <Input s={6} label="Visual Duration (sec)" validate defaultValue='5' onChange={(e) => {this.updateDuration(e)}}/>
+                    </Row>
                 </Col>
-                <Col s={8}>
+                <Col id='chart' s={8}>
                     <h5>Array Entries: <CountUp duration={this.state.animationDuration / 1500} end={this.state.entries} /></h5>
                     <h5>Performance (ms): {this.state.performance}</h5>
                     {this.chart()}
+                </Col>
+                <Col s={12}>
+                    <Highlight className='javascript'> {`
+                        function bubbleSort(dataCopy) {
+                            let temp1 = 0;
+                            let temp2 = 0;
+                            for (let i = 0; i < dataCopy.length - 1; i++) {
+                    
+                                for (let j = 0; j < dataCopy.length - i - 1; j++) {
+                    
+                                    if (dataCopy[j] > dataCopy[j + 1]) {
+                    
+                                        temp1 = dataCopy[j];
+                                        temp2 = dataCopy[j + 1];
+                                
+                                        // swap
+                                        dataCopy[j] = temp2;
+                                        dataCopy[j + 1] = temp1;
+                                    }
+                                }
+                            }
+                        }`}
+                    </Highlight>
                 </Col>
             </Row>
         )

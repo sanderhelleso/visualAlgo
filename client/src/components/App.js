@@ -11,7 +11,6 @@ export default class App extends Component {
   render() {
     return (
         <main className='container'>
-            <h1>Visual Sorting Algorithms</h1>
             <Row>
                 <Col s={12} className=''>
                     <BrowserRouter>
