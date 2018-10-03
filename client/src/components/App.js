@@ -6,17 +6,19 @@ import { Button, Icon, Row, Col, Tabs, Tab, Input } from 'react-materialize';
 import CountUp from 'react-countup';
 import Highlight from 'react-highlight';
 
-// import algos
+// import algos and samples
 import { bubbleSort } from '../algorithms/bubbleSort';
+
+import { codeSamples } from '../algorithms/codeSamples/codeSamples';
 
 
 export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            algo: 'bubbleSort',
             chart: 'Bar',
             performance: 0,
-            entries: 0,
             animationDuration: 3000,
             shuffleTime: 1000,
             dataAmount: 50,
@@ -49,17 +51,8 @@ export default class App extends Component {
 
     // initialete app state
     componentDidMount() {
-        const newData = bubbleSort(this.state.data.datasets.slice(0))[0];
-        this.setState({
-            entries: newData.entries,
-            performance: newData.performance,
-            data: Object.assign({}, this.state.data, {
-                datasets: [{
-                    data: newData.data,
-                    backgroundColor: newData.backgroundColor
-                }]
-            })
-        });
+        this.play();
+        this.codeSamples();
     }
 
     play() {
@@ -267,6 +260,17 @@ export default class App extends Component {
         });
     }
 
+    codeSamples() {
+        Object.keys(codeSamples()).map(key => {
+            if (key === this.state.algo) {
+                this.setState({
+                    codeSample: codeSamples()[key]
+                });
+            }
+        });
+
+    }
+
     render() {
 
         return (
@@ -293,26 +297,9 @@ export default class App extends Component {
                     {this.chart()}
                 </Col>
                 <Col s={12}>
-                    <Highlight className='javascript'> {`
-                        function bubbleSort(dataCopy) {
-                            let temp1 = 0;
-                            let temp2 = 0;
-                            for (let i = 0; i < dataCopy.length - 1; i++) {
-                    
-                                for (let j = 0; j < dataCopy.length - i - 1; j++) {
-                    
-                                    if (dataCopy[j] > dataCopy[j + 1]) {
-                    
-                                        temp1 = dataCopy[j];
-                                        temp2 = dataCopy[j + 1];
-                                
-                                        // swap
-                                        dataCopy[j] = temp2;
-                                        dataCopy[j + 1] = temp1;
-                                    }
-                                }
-                            }
-                        }`}
+                    <Highlight className='javascript'> {
+                        this.state.codeSample
+                    }
                     </Highlight>
                 </Col>
             </Row>
