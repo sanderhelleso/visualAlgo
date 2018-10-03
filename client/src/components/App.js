@@ -16,7 +16,7 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            algo: 'bubbleSort',
+            algo: 'bubbel_sort',
             chart: 'Bar',
             performance: 0,
             animationDuration: 3000,
@@ -47,6 +47,7 @@ export default class App extends Component {
         // input
         this.updateAmount = this.updateAmount.bind(this);
         this.updateDuration = this.updateDuration.bind(this);
+        this.updateAlgo = this.updateAlgo.bind(this);
     }
 
     // initialete app state
@@ -260,6 +261,14 @@ export default class App extends Component {
         });
     }
 
+    updateAlgo(e) {
+        this.setState({
+            algo: e.target.value
+        })
+        this.codeSamples();
+        console.log(this.state);
+    }
+
     codeSamples() {
         Object.keys(codeSamples()).map(key => {
             if (key === this.state.algo) {
@@ -276,13 +285,18 @@ export default class App extends Component {
         return (
             <Row className='container'>
                 <Col s={4}>
-                    <h3>Bubblesort</h3>
+                    <h3>Bubble Sort</h3>
+                    <Row>
+                        <Input s={12} type='select' label="Select Algorithm" defaultValue='bubble_sort' onChange={(e) => {this.updateAlgo(e)}}>
+                            <option value='bubble_sort'>Bubble Sort</option>
+                            <option value='merge_sort'>Merge Sort</option>
+                        </Input>
+                    </Row>
                     <Row>
                         <Input s={6} label="Amount of data" validate defaultValue='50' onChange={(e) => {this.updateAmount(e)}} />
                         <Input s={6} label="Visual Duration (sec)" validate defaultValue='3' onChange={(e) => {this.updateDuration(e)}}/>
                         <Input s={6} label="Datatype" disabled={true} validate defaultValue='Integer' />
                     </Row>
-                    <h5>Chart</h5>
                     <Button waves='light' onClick={this.setBarChart}>Bar</Button>
                     <Button waves='light' onClick={this.setHrBarChart}>Horizontal Bar</Button>
                     <Button waves='light' onClick={this.setLineChart}>Line</Button>
